@@ -13,6 +13,7 @@ public class GridHolder : MonoBehaviour
         gridPoints = new GridPoint[columns, rows];
 
         PopulateGridArray();
+        PopulateChildren();
         LabelElements();
         SpaceElements();
     }
@@ -23,6 +24,14 @@ public class GridHolder : MonoBehaviour
 
     public GridPoint[] GetNeighbors(int column, int row) {
         return null;
+    }
+
+    public Transform GetTransform(int x, int y) {
+        return gridPoints[x,y].transform;
+    }
+
+    public GridPoint GetGridPoint(int x, int y) {
+        return gridPoints[x,y];
     }
 
     void PopulateGridArray() {
@@ -45,11 +54,53 @@ public class GridHolder : MonoBehaviour
         }
     }
 
-    void LabelElements(){
+    void PopulateChildren() {
         for (int columnIndex = 0; columnIndex < columns; columnIndex++) {
             for (int rowIndex = 0; rowIndex < rows; rowIndex++) {
                 GridPoint gridPoint = gridPoints[columnIndex, rowIndex].GetComponent<GridPoint>();
                 gridPoint.SetGridPosition(columnIndex, rowIndex);
+            }
+        }
+    }
+
+    void LabelElements(){
+        List<GridPoint> childPoints = new List<GridPoint>();
+
+        for (int columnIndex = 0; columnIndex < columns; columnIndex++) {
+            for (int rowIndex = 0; rowIndex < rows; rowIndex++) {
+                GridPoint gridPoint = gridPoints[columnIndex, rowIndex].GetComponent<GridPoint>();
+                gridPoint.SetGridPosition(columnIndex, rowIndex);
+                childPoints.Clear();
+
+                if (columnIndex - 1 > 0) {
+                    childPoints.Add(gridPoints[columnIndex-1, rowIndex]);
+                }
+
+                if (columnIndex + 1 <columns) {
+                    childPoints.Add(gridPoints[columnIndex+1, rowIndex]);
+                }
+
+                if (rowIndex - 1 > 0) {
+                    childPoints.Add(gridPoints[columnIndex, rowIndex-1]);
+                }
+
+                if (rowIndex + 1 <rows) {
+                    childPoints.Add(gridPoints[columnIndex, rowIndex + 1]);
+                }
+
+                gridPoint.childNodes = childPoints.ToArray();
+
+                /*if (columnIndex == 0 && rowIndex == 0) {
+                    Debug.Log("---------------------------");
+                    Debug.Log("Node 0,0 neighbors");
+                    Debug.Log("---------------------------");
+                    Debug.Log("gridPoint.childNodes.Length=>"+gridPoint.childNodes.Length);
+
+                    foreach(GridPoint point in gridPoint.childNodes) {
+                        Debug.Log(point.ToString());
+                    }
+                    Debug.Log("---------------------------");
+                }*/
             }
         }
     }

@@ -11,12 +11,16 @@ public class GridPoint : MonoBehaviour, IPointerClickHandler
     bool gridPointEnabled = true;
 
     public bool visited = false;
+    public GridPoint parentNode;
+    public GridPoint[] childNodes;
 
     Coroutine toggleCoroutine;
 
     public void SetGridPosition(int x, int y) {
         this.x = x;
         this.y = y;
+
+        this.gameObject.name = "Point_" + x + "," + y;
 
         GetComponent<GridPointLabel>().SetLabel(x.ToString() + "," + y.ToString());
     }
@@ -25,12 +29,17 @@ public class GridPoint : MonoBehaviour, IPointerClickHandler
         return gridPointEnabled;
     }
 
+    public int GetX() {
+        return x;
+    }
+
+    public int GetY() {
+        return y;
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
         int clickCount = eventData.clickCount;
-
-        //Display the click count.
-        Debug.Log(clickCount);
 
         if (clickCount == 1) {
             toggleCoroutine = StartCoroutine(DetectSingleClick());
@@ -52,5 +61,10 @@ public class GridPoint : MonoBehaviour, IPointerClickHandler
         gridPointEnabled = !gridPointEnabled;
 
         GetComponent<SpriteRenderer>().color = gridPointEnabled ? Color.white : Color.grey;
+    }
+
+    public override string ToString()
+    {
+        return "X:" + x + "Y:" + y;
     }
 }
